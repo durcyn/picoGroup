@@ -136,8 +136,14 @@ function dataobj:OnEnter()
 			end
 		end
 	elseif UnitInParty("player") then
-		local i = GetPartyLeaderIndex()
-		GameTooltip:AddDoubleLine("Leader", names[UnitName(i == 0 and "player" or "party"..i)])
+		local leader = ""
+		for i = 1, GetNumGroupMembers() do
+			if UnitIsGroupLeader("party"..i) then
+				leader = UnitName("party"..i)
+				break
+			end
+		end
+		GameTooltip:AddDoubleLine("Leader", names[leader])
 	end
 
 	GameTooltip:Show()
