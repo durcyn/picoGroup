@@ -34,8 +34,8 @@ end
 
 
 local function GetText()
-	if GetLFGMode() == "queued" then
-		local _, _, tank, healer, dps, _, instance, _, _, _, _, average, elapsed = GetLFGQueueStats()
+	if GetLFGMode(1) == "queued" then
+		local _, _, tank, healer, dps, _, instance, _, _, _, _, average, elapsed = GetLFGQueueStats(1)
 		dps = dps or 3
 
 		return "LFG ".. (tank == 0 and icons.tank or icons.none)
@@ -85,15 +85,15 @@ function dataobj:OnEnter()
 		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficulty()], nil,nil,nil, 1,1,1)
 	elseif GetNumGroupMembers() > 0 then
 		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
-	elseif GetLFGMode() == "queued" then
+	elseif GetLFGMode(1) == "queued" then
 		GameTooltip:AddLine("Looking for group", 0.75,1,0.75)
 	else
 		GameTooltip:AddLine("Not in a group", 1,1,1)
 	end
 
-	if GetLFGMode() == "queued" then
-		local _, _, _, _, _, _, instance, _, _, _, _, mywait, elapsed = GetLFGQueueStats()
-		average = average or 0
+	if GetLFGMode(1) == "queued" then
+		local _, _, _, _, _, _, instance, _, _, _, _, mywait, elapsed = GetLFGQueueStats(1)
+		local average = average or 0
 		mywait  = mywait  or 0
 
 		if instance then GameTooltip:AddLine(instance, 1,1,1) end
