@@ -22,14 +22,14 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	return GetNumRaidMembers() > 0 and (raidtypes[GetRaidDifficulty()].. "|r - ")
-		or GetNumPartyMembers() > 0 and (dungeontypes[GetDungeonDifficulty()].. "|r - ")
+	return IsInRaid() and (raidtypes[GetRaidDifficulty()].. "|r - ")
+		or GetNumGroupMembers() > 0 and (dungeontypes[GetDungeonDifficultyID()].. "|r - ")
 		or (ITEM_QUALITY_COLORS[0].hex.."Solo")
 end
 
 
 local function GetLootTypeText()
-	return (GetNumRaidMembers() > 0 or GetNumPartyMembers() > 0) and (ITEM_QUALITY_COLORS[GetLootThreshold()].hex.. loottypes[GetLootMethod()]) or ""
+	return GetNumGroupMembers() > 0 and (ITEM_QUALITY_COLORS[GetLootThreshold()].hex.. loottypes[GetLootMethod()]) or ""
 end
 
 
@@ -81,10 +81,10 @@ function dataobj:OnEnter()
 
 	GameTooltip:AddLine("picoGroup")
 
-	if GetNumRaidMembers() > 0 then
+	if IsInRaid() then
 		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficulty()], nil,nil,nil, 1,1,1)
-	elseif GetNumPartyMembers() > 0 then
-		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficulty()], nil,nil,nil, 1,1,1)
+	elseif GetNumGroupMembers() > 0 then
+		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
 	elseif GetLFGMode() == "queued" then
 		GameTooltip:AddLine("Looking for group", 0.75,1,0.75)
 	else
@@ -101,24 +101,24 @@ function dataobj:OnEnter()
 		if elapsed then GameTooltip:AddDoubleLine(TIME_IN_QUEUE:gsub(": %%s", ""), SecondsToTime(GetTime() - elapsed), nil,nil,nil, 1,1,1) end
 	end
 
-	if GetNumRaidMembers() == 0 and GetNumPartyMembers() == 0 then return GameTooltip:Show() end
+	if GetNumGroupMembers() == 0 then return GameTooltip:Show() end
 
 	GameTooltip:AddDoubleLine("Loot method", GetLootTypeText())
 
 	local _, pML, rML = GetLootMethod()
 	if pML or rML then GameTooltip:AddDoubleLine("Master looter", names[UnitName(rML and "raid"..rML or pML == 0 and "player" or "party"..pML)]) end
 
-	if UnitInRaid("player") then
+	if IsInRaid() then
 		local officers
 
-		for i=1,GetNumRaidMembers() do
+		for i=1,GetNumGroupMembers() do
 			local name, rank, _, _, _, _, _, _, _, _, isML = GetRaidRosterInfo(i)
 			if rank == 1 then officers = true
 			elseif rank == 2 then GameTooltip:AddDoubleLine("Leader", names[name]) end
 		end
 
 		if officers then
-			for i=1,GetNumRaidMembers() do
+			for i=1,GetNumGroupMembers() do
 				local name, rank = GetRaidRosterInfo(i)
 				if rank == 1 then
 					GameTooltip:AddDoubleLine(officers and "Officers" or "", names[name])
@@ -137,19 +137,19 @@ end
 
 local dropdown, dropdowninit, menuitems
 function dataobj:OnClick(button)
-	if (GetNumRaidMembers() + GetNumPartyMembers()) == 0 then return end
+	if GetNumGroupMembers() == 0 then return end
 	if not dropdown then
 		dropdown = CreateFrame("Frame", "picoGroupDownFrame", self, "UIDropDownMenuTemplate")
 
 		local function sdd(self) SetDungeonDifficulty(self.value) end
 		local function srd(self)
 			SetRaidDifficulty(self.value)
-			if GetNumRaidMembers() == 0 then ConvertToRaid() end
+			if not IsInRaid() then ConvertToRaid() end
 		end
 		local function slm(self) SetLootMethod(self.value, self.value == "master" and UnitName("player") or nil) end
 		local function slt(self) SetLootThreshold(self.value) end
-		local function gdd(i) return GetNumRaidMembers() == 0 and GetDungeonDifficulty() == i end
-		local function grd(i) return GetNumRaidMembers() > 0 and GetRaidDifficulty() == i end
+		local function gdd(i) return GetNumGroupMembers() == 0 and GetDungeonDifficultyID() == i end
+		local function grd(i) return GetNumGroupMembers() > 0 and GetRaidDifficulty() == i end
 		local function glm(i) return GetLootMethod() == i end
 		local function glt(i) return GetLootThreshold() == i end
 		menuitems = {
