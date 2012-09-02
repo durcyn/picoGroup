@@ -34,17 +34,19 @@ end
 
 
 local function GetText()
-	if GetLFGMode(1) == "queued" then
-		local _, _, tank, healer, dps, _, instance, _, _, _, _, average, elapsed = GetLFGQueueStats(1)
-		dps = dps or 3
+	for i = 1, NUM_LE_LFG_CATEGORYS do
+		if GetLFGMode(i) == "queued" then
+			local _, _, tank, healer, dps, _, instance, _, _, _, _, average, elapsed = GetLFGQueueStats(i)
+			dps = dps or 3
 
-		return "LFG ".. (tank == 0 and icons.tank or icons.none)
-			..(healer == 0 and icons.heal or icons.none)
-			..(dps    <= 2 and icons.dps  or icons.none)
-			..(dps    <= 1 and icons.dps  or icons.none)
-			..(dps    == 0 and icons.dps  or icons.none)
-	else
-		return GetGroupTypeText().. GetLootTypeText()
+			return "LFG ".. (tank == 0 and icons.tank or icons.none)
+				..(healer == 0 and icons.heal or icons.none)
+				..(dps    <= 2 and icons.dps  or icons.none)
+				..(dps    <= 1 and icons.dps  or icons.none)
+				..(dps    == 0 and icons.dps  or icons.none)
+		else
+			return GetGroupTypeText().. GetLootTypeText()
+		end
 	end
 end
 
@@ -81,18 +83,25 @@ function dataobj:OnEnter()
 
 	GameTooltip:AddLine("picoGroup")
 
+	local queue = 0
+	for i=1,NUM_LE_LFG_CATEGORYS do
+		if GetLFGMode(i) == "queued" then
+			queue = i
+		end
+	end
+
 	if IsInRaid() then
 		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficulty()], nil,nil,nil, 1,1,1)
 	elseif GetNumGroupMembers() > 0 then
 		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
-	elseif GetLFGMode(1) == "queued" then
+	elseif queue ~= 0 then
 		GameTooltip:AddLine("Looking for group", 0.75,1,0.75)
 	else
 		GameTooltip:AddLine("Not in a group", 1,1,1)
 	end
 
-	if GetLFGMode(1) == "queued" then
-		local _, _, _, _, _, _, instance, _, _, _, _, mywait, elapsed = GetLFGQueueStats(1)
+	if queue ~= 0 then
+		local _, _, _, _, _, _, instance, _, _, _, _, mywait, elapsed = GetLFGQueueStats(queue)
 		local average = average or 0
 		mywait  = mywait  or 0
 
