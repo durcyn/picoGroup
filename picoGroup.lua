@@ -61,23 +61,22 @@ local function Update()
 	dataobj.text = GetText()
 end
 
-local function UpdateGuild()
+local function GuildGroupQuery()
 	if IsInGuild() then
 		RequestGuildPartyState()
 	end
 end
 
-local function UpdateGuildState(...)
-	local isGuildGroup = ...
-	if isGuildGroup ~= guildgroup then
-		guildgroup = isGuildGroup
+local function GuildGroupUpdate(event, ...)
+	if ... ~= guildgroup then
+		guildgroup = ...
 		Update()
 	end
 end
 
 ae.RegisterEvent("picoGroup", "GROUP_ROSTER_UPDATE", Update)
-ae.RegisterEvent("picoGroup", "PLAYER_GUILD_UPDATE", UpdateGuild)
-ae.RegisterEvent("picoGroup", "GUILD_PARTY_STATE_UPDATED", UpdateGuildState)
+ae.RegisterEvent("picoGroup", "PLAYER_GUILD_UPDATE", GuildGroupQuery)
+ae.RegisterEvent("picoGroup", "GUILD_PARTY_STATE_UPDATED", GuildGroupUpdate)
 ae.RegisterEvent("picoGroup", "PLAYER_DIFFICULTY_CHANGED", Update)
 ae.RegisterEvent("picoGroup", "UPDATE_INSTANCE_INFO", Update)
 ae.RegisterEvent("picoGroup", "PARTY_MEMBERS_CHANGED", Update)
