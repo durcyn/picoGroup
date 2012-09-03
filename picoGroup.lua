@@ -75,12 +75,13 @@ local function UpdateGuildState(...)
 	end
 end
 
-ae.RegisterEvent("picoGroup", "RAID_ROSTER_UPDATE", Update)
+ae.RegisterEvent("picoGroup", "GROUP_ROSTER_UPDATE", Update)
 ae.RegisterEvent("picoGroup", "PLAYER_GUILD_UPDATE", UpdateGuild)
 ae.RegisterEvent("picoGroup", "GUILD_PARTY_STATE_UPDATED", UpdateGuildState)
 ae.RegisterEvent("picoGroup", "PLAYER_DIFFICULTY_CHANGED", Update)
 ae.RegisterEvent("picoGroup", "UPDATE_INSTANCE_INFO", Update)
 ae.RegisterEvent("picoGroup", "PARTY_MEMBERS_CHANGED", Update)
+ae.RegisterEvent("picoGroup", "PARTY_LEADER_CHANGED", Update)
 ae.RegisterEvent("picoGroup", "PARTY_LOOT_METHOD_CHANGED", Update)
 ae.RegisterEvent("picoGroup", "LFG_UPDATE", Update)
 ae.RegisterEvent("picoGroup", "LFG_QUEUE_STATUS_UPDATE", Update)
