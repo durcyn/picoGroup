@@ -10,6 +10,7 @@ local icons = {
 	dps  = "|TInterface\\LFGFrame\\LFGRole.blp:0:0:0:0:64:16:16:31:1:16|t",
 	none = "|TInterface\\RAIDFRAME\\ReadyCheck-NotReady.blp:0|t"
 }
+local guildgroup = false
 local classcolors = {}
 for i,v in pairs(RAID_CLASS_COLORS) do classcolors[i] = string.format("|cff%02x%02x%02x", v.r*255, v.g*255, v.b*255) end
 local names = setmetatable({}, {__index = function(t, i)
@@ -22,8 +23,11 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	return IsInRaid() and (raidtypes[GetRaidDifficulty()].. "|r - ")
-		or GetNumGroupMembers() > 0 and (dungeontypes[GetDungeonDifficultyID()].. "|r - ")
+	local extra = ""
+	if guildgroup then extra = "G" end
+
+	return IsInRaid() and (raidtypes[GetRaidDifficulty()]..extra.. "|r - ")
+		or IsInGroup() and (dungeontypes[GetDungeonDifficultyID()]..extra.. "|r - ")
 		or (ITEM_QUALITY_COLORS[0].hex.."Solo")
 end
 
@@ -53,9 +57,29 @@ end
 
 local dataobj = ldb:NewDataObject("picoGroup", {type = "data source", icon = "Interface\\Buttons\\UI-GroupLoot-Dice-Up", text = GetText()})
 
+local function Update()
+	dataobj.text = GetText()
+end
 
-local function Update() dataobj.text = GetText() end
+local function UpdateGuild()
+	if IsInGuild() then
+		RequestGuildPartyState()
+	end
+end
+
+local function UpdateGuildState(...)
+	local isGuildGroup = ...
+	if isGuildGroup ~= guildgroup then
+		guildgroup = isGuildGroup
+		Update()
+	end
+end
+
 ae.RegisterEvent("picoGroup", "RAID_ROSTER_UPDATE", Update)
+ae.RegisterEvent("picoGroup", "PLAYER_GUILD_UPDATE", UpdateGuild)
+ae.RegisterEvent("picoGroup", "GUILD_PARTY_STATE_UPDATED", UpdateGuildState)
+ae.RegisterEvent("picoGroup", "PLAYER_DIFFICULTY_CHANGED", Update)
+ae.RegisterEvent("picoGroup", "UPDATE_INSTANCE_INFO", Update)
 ae.RegisterEvent("picoGroup", "PARTY_MEMBERS_CHANGED", Update)
 ae.RegisterEvent("picoGroup", "PARTY_LOOT_METHOD_CHANGED", Update)
 ae.RegisterEvent("picoGroup", "LFG_UPDATE", Update)
@@ -112,6 +136,10 @@ function dataobj:OnEnter()
 
 	if GetNumGroupMembers() == 0 then return GameTooltip:Show() end
 
+	if guildgroup then
+		GameTooltip:AddLine("Guild Group")
+	end
+
 	GameTooltip:AddDoubleLine("Loot method", GetLootTypeText())
 
 	local _, pML, rML = GetLootMethod()
@@ -130,7 +158,7 @@ function dataobj:OnEnter()
 			for i=1,GetNumGroupMembers() do
 				local name, rank = GetRaidRosterInfo(i)
 				if rank == 1 then
-					GameTooltip:AddDoubleLine(officers and "Officers" or "", names[name])
+					GameTooltip:AddDoubleLine(officers and "Officers" or " ", names[name])
 					officers = false
 				end
 			end
@@ -199,7 +227,7 @@ function dataobj:OnClick(button)
 			{text = PARTY_LEAVE, func = LeaveParty},
 		}
 		function dropdowninit()
-			local isleader = IsRaidLeader() or IsRaidOfficer() or IsPartyLeader()
+			local isleader = UnitIsGroupLeader("player") or UnitIsRaidOfficer("player")
 			for i,v in ipairs(menuitems) do
 				if not v.leaderonly or isleader then
 					if v.checkedfunc then v.checked = v.checkedfunc(v.value) end
