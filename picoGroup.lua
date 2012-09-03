@@ -10,7 +10,7 @@ local icons = {
 	dps  = "|TInterface\\LFGFrame\\LFGRole.blp:0:0:0:0:64:16:16:31:1:16|t",
 	none = "|TInterface\\RAIDFRAME\\ReadyCheck-NotReady.blp:0|t"
 }
-local guildgroup = false
+local guildsuffix
 local classcolors = {}
 for i,v in pairs(RAID_CLASS_COLORS) do classcolors[i] = string.format("|cff%02x%02x%02x", v.r*255, v.g*255, v.b*255) end
 local names = setmetatable({}, {__index = function(t, i)
@@ -23,11 +23,8 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	local extra = ""
-	if guildgroup then extra = "G" end
-
-	return IsInRaid() and (raidtypes[GetRaidDifficulty()]..extra.. "|r - ")
-		or IsInGroup() and (dungeontypes[GetDungeonDifficultyID()]..extra.. "|r - ")
+	return IsInRaid() and (raidtypes[GetRaidDifficulty()]..(guildsuffix or "").. "|r - ")
+		or IsInGroup() and (dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - ")
 		or (ITEM_QUALITY_COLORS[0].hex.."Solo")
 end
 
@@ -67,11 +64,8 @@ local function GuildGroupQuery()
 	end
 end
 
-local function GuildGroupUpdate(event, ...)
-	if ... ~= guildgroup then
-		guildgroup = ...
-		Update()
-	end
+local function GuildGroupUpdate(event, isguild)
+	if isguild then guildsuffix = "G" else guildsuffix = "" end
 end
 
 ae.RegisterEvent("picoGroup", "GROUP_ROSTER_UPDATE", Update)
