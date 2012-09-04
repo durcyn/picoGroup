@@ -113,13 +113,13 @@ function dataobj:OnEnter()
 	elseif GetNumGroupMembers() > 0 then
 		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
 	elseif queue ~= 0 then
-		GameTooltip:AddLine("Looking for group", 0.75,1,0.75)
+		GameTooltip:AddLine(LFG_TITLE, 0.75,1,0.75)
 	else
-		GameTooltip:AddLine("Not in a group", 1,1,1)
+		GameTooltip:AddLine(ERR_NOT_IN_GROUP, 1,1,1)
 	end
 
 	if queue ~= 0 then
-		local _, _, _, _, _, _, instance, _, _, _, _, mywait, elapsed = GetLFGQueueStats(queue)
+		local _, _, _, _, _, _,_, _, _, _,  instance, _, _, _, _, mywait, elapsed = GetLFGQueueStats(queue)
 		local average = average or 0
 		mywait  = mywait  or 0
 
