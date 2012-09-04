@@ -24,7 +24,7 @@ end})
 
 local function GetGroupTypeText()
 	return IsInRaid() and (raidtypes[GetRaidDifficulty()]..(guildsuffix or "").. "|r - ")
-		or IsInGroup() and (dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - ")
+		or (IsInGroup() and GetDungeonDifficultyID() ~= 0) and (dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - ")
 		or (ITEM_QUALITY_COLORS[0].hex.."Solo")
 end
 
