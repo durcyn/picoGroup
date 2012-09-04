@@ -174,7 +174,6 @@ end
 
 local dropdown, dropdowninit, menuitems
 function dataobj:OnClick(button)
-	if GetNumGroupMembers() == 0 then return end
 	if not dropdown then
 		dropdown = CreateFrame("Frame", "picoGroupDownFrame", self, "UIDropDownMenuTemplate")
 
