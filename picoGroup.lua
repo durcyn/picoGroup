@@ -23,9 +23,22 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	return IsInRaid() and (raidtypes[(GetRaidDifficulty() or 1)]..(guildsuffix or "").. "|r - ")
-		or (IsInGroup() and GetDungeonDifficultyID() ~= 0) and (dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - ")
-		or (ITEM_QUALITY_COLORS[0].hex.."Solo")
+	local text = (ITEM_QUALITY_COLORS[0].hex.."Solo")
+	if IsInRaid() then
+		local diff = GetRaidDifficulty()
+		if diff == 0 then
+			text = ITEM_QUALITY_COLORS[1].hex.."40"..(guildsuffix or "").."|r - "
+		else
+			text = raidtypes[(GetRaidDifficulty() or 1)]..(guildsuffix or "").."|r - "
+		end
+	elseif IsInGroup() then
+		local diff = GetDungeonDifficultyID() 
+		if diff == 0 then
+		else
+			text = dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - "
+		end
+	end
+	return text
 end
 
 
