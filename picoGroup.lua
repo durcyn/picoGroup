@@ -23,7 +23,7 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	return IsInRaid() and (raidtypes[GetRaidDifficulty()]..(guildsuffix or "").. "|r - ")
+	return IsInRaid() and (raidtypes[(GetRaidDifficulty() or 1)]..(guildsuffix or "").. "|r - ")
 		or (IsInGroup() and GetDungeonDifficultyID() ~= 0) and (dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - ")
 		or (ITEM_QUALITY_COLORS[0].hex.."Solo")
 end
@@ -233,5 +233,14 @@ function dataobj:OnClick(button)
 	GameTooltip:Hide()
 	UIDropDownMenu_Initialize(dropdown, dropdowninit, "MENU")
 	UIDropDownMenu_SetAnchor(dropdown, 0, 0, GetTipAnchor(self))
-	ToggleDropDownMenu(1, "picoGroupDownFrame", dropdown, "meh")
+
+	if button == "MiddleButton" then
+		if IsInInstance() then 
+			LFGTeleport(true)
+		else
+			LFGTeleport()
+		end
+	else
+		ToggleDropDownMenu(1, "picoGroupDownFrame", dropdown, "meh")
+	end
 end
