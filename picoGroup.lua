@@ -31,7 +31,7 @@ local function GetGroupTypeText()
 		else
 			text = raidtypes[(GetRaidDifficulty() or 1)]..(guildsuffix or "").."|r - "
 		end
-	elseif IsInGroup() then
+	elseif IsInGroup() or IsInInstance() then
 		local diff = GetDungeonDifficultyID() 
 		if diff == 0 then
 		else
@@ -129,6 +129,8 @@ function dataobj:OnEnter()
 		GameTooltip:AddLine(LFG_TITLE, 0.75,1,0.75)
 	else
 		GameTooltip:AddLine(ERR_NOT_IN_GROUP, 1,1,1)
+		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
+		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficulty()], nil,nil,nil, 1,1,1)
 	end
 
 	if queue ~= 0 then
