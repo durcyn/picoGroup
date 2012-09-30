@@ -207,6 +207,7 @@ function dataobj:OnClick(button)
 			{text = "Group Mode", isTitle = true, leaderonly = true},
 			{text = DUNGEON_DIFFICULTY1, value = 1, func = sdd, checkedfunc = gdd, leaderonly = true},
 			{text = DUNGEON_DIFFICULTY2, value = 2, func = sdd, checkedfunc = gdd, leaderonly = true},
+			{text = CHALLENGE_MODE, value = 8, func = sdd, checkedfunc = gdd, leaderonly = true},
 			{text = RAID_DIFFICULTY1, value = 1, func = srd, checkedfunc = grd, leaderonly = true},
 			{text = RAID_DIFFICULTY2, value = 2, func = srd, checkedfunc = grd, leaderonly = true},
 			{text = RAID_DIFFICULTY3, value = 3, func = srd, checkedfunc = grd, leaderonly = true},
@@ -229,6 +230,7 @@ function dataobj:OnClick(button)
 
 			{disabled = true, leaderonly = true},
 			{text = RESET_INSTANCES, func = function() StaticPopup_Show("CONFIRM_RESET_INSTANCES") end, leaderonly = true},
+			{text = RESET_CHALLENGE_MODE, func = function() StaticPopup_Show("CONFIRM_RESET_CHALLENGE_MODE") end, leaderonly = true},
 			{disabled = true, leaderonly = true},
 			{text = OPT_OUT_LOOT_TITLE:gsub(":.+$", ""), func = function() SetOptOutOfLoot(not GetOptOutOfLoot()) end, checked = GetOptOutOfLoot},
 			{disabled = true},
