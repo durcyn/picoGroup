@@ -202,8 +202,8 @@ function dataobj:OnClick(button)
 		end
 		local function slm(self) SetLootMethod(self.value, self.value == "master" and UnitName("player") or nil) end
 		local function slt(self) SetLootThreshold(self.value) end
-		local function gdd(i) return GetNumGroupMembers() == 0 and GetDungeonDifficultyID() == i end
-		local function grd(i) return GetNumGroupMembers() > 0 and GetRaidDifficulty() == i end
+		local function gdd(i) return not IsInRaid() and GetDungeonDifficultyID() == i end
+		local function grd(i) return IsInRaid() and GetRaidDifficulty() == i end
 		local function glm(i) return GetLootMethod() == i end
 		local function glt(i) return GetLootThreshold() == i end
 		menuitems = {
