@@ -192,7 +192,7 @@ function dataobj:OnClick(button)
 	if not dropdown then
 		dropdown = CreateFrame("Frame", "picoGroupDownFrame", self, "UIDropDownMenuTemplate")
 
-		local function sdd(self) SetDungeonDifficulty(self.value) end
+		local function sdd(self) SetDungeonDifficultyID(self.value) end
 		local function srd(self)
 			SetRaidDifficulty(self.value)
 			if not IsInRaid() then ConvertToRaid() end
