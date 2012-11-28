@@ -1,4 +1,4 @@
-## Interface: 50001
+## Interface: 50100
 
 ## Title: picoGroup
 ## Notes: Minimalistic LibDataBroker-based group information
@@ -11,7 +11,7 @@
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Group: true
 ## X-LoadOn-Events: LFG_UPDATE
-## X-LoadOn-LFG_UPDATE: if GetLFGMode() then AddonLoader:LoadAddOn('picoGroup') end
+## X-LoadOn-LFG_UPDATE: if GetLFGMode(LE_LFG_CATEGORY) then AddonLoader:LoadAddOn('picoGroup') end
 
 LibStub.lua
 CallbackHandler-1.0.lua
