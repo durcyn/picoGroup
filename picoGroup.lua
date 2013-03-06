@@ -2,8 +2,19 @@
 local ldb, ae = LibStub:GetLibrary("LibDataBroker-1.1"), LibStub("AceEvent-3.0")
 
 local loottypes = {freeforall = "FFA", group = "Group", master = "ML", needbeforegreed = "NBG", roundrobin = "RR"}
-local raidtypes = {ITEM_QUALITY_COLORS[4].hex.."10", ITEM_QUALITY_COLORS[4].hex.."25", ITEM_QUALITY_COLORS[5].hex.."10H", ITEM_QUALITY_COLORS[5].hex.."25H", ITEM_QUALITY_COLORS[4].hex.."RF"}
-local dungeontypes = {ITEM_QUALITY_COLORS[2].hex.."5", ITEM_QUALITY_COLORS[3].hex.."5H", nil, nil, nil, nil, nil, ITEM_QUALITY_COLORS[4].hex.."5C"}
+
+local instancetypes = {
+	ITEM_QUALITY_COLORS[2].hex.."5",
+	ITEM_QUALITY_COLORS[3].hex.."5H",
+	ITEM_QUALITY_COLORS[4].hex.."10",
+	ITEM_QUALITY_COLORS[4].hex.."25",
+	ITEM_QUALITY_COLORS[5].hex.."10H",
+	ITEM_QUALITY_COLORS[5].hex.."25H",
+	ITEM_QUALITY_COLORS[4].hex.."RF",
+	ITEM_QUALITY_COLORS[4].hex.."5C",
+	ITEM_QUALITY_COLORS[4].hex.."40"
+}
+
 local icons = {
 	tank = "|TInterface\\LFGFrame\\LFGRole.blp:0:0:0:0:64:16:32:47:1:16|t",
 	heal = "|TInterface\\LFGFrame\\LFGRole.blp:0:0:0:0:64:16:48:63:1:16|t",
@@ -24,19 +35,9 @@ end})
 
 local function GetGroupTypeText()
 	local text = (ITEM_QUALITY_COLORS[0].hex.."Solo")
-	if IsInRaid() then
-		local diff = GetRaidDifficultyID()
-		if diff == 0 then
-			text = ITEM_QUALITY_COLORS[1].hex.."40"..(guildsuffix or "").."|r - "
-		else
-			text = raidtypes[(GetRaidDifficultyID() or 1)]..(guildsuffix or "").."|r - "
-		end
-	elseif IsInGroup() or IsInInstance() then
-		local diff = GetDungeonDifficultyID() 
-		if diff == 0 then
-		else
-			text = dungeontypes[GetDungeonDifficultyID()]..(guildsuffix or "").. "|r - "
-		end
+	local zone, group, diff, diffname = GetInstanceInfo()
+	if diff > 0 then 
+		text = instancetypes[diff]..(guildsuffix or "").."|r - " 
 	end
 	return text
 end
@@ -174,10 +175,12 @@ function dataobj:OnEnter()
 		end
 	elseif UnitInParty("player") then
 		local leader = ""
-		for i = 1, GetNumGroupMembers() do
-			if UnitIsGroupLeader("party"..i) then
-				leader = UnitName("party"..i)
-				break
+		if UnitIsGroupLeader("player") then leader = UnitName("player") else
+			for i = 1, GetNumGroupMembers() do
+				if UnitIsGroupLeader("party"..i) then
+					leader = UnitName("party"..i)
+					break
+				end
 			end
 		end
 		GameTooltip:AddDoubleLine("Leader", names[leader])
