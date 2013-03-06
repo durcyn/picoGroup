@@ -25,11 +25,11 @@ end})
 local function GetGroupTypeText()
 	local text = (ITEM_QUALITY_COLORS[0].hex.."Solo")
 	if IsInRaid() then
-		local diff = GetRaidDifficulty()
+		local diff = GetRaidDifficultyID()
 		if diff == 0 then
 			text = ITEM_QUALITY_COLORS[1].hex.."40"..(guildsuffix or "").."|r - "
 		else
-			text = raidtypes[(GetRaidDifficulty() or 1)]..(guildsuffix or "").."|r - "
+			text = raidtypes[(GetRaidDifficultyID() or 1)]..(guildsuffix or "").."|r - "
 		end
 	elseif IsInGroup() or IsInInstance() then
 		local diff = GetDungeonDifficultyID() 
@@ -122,7 +122,7 @@ function dataobj:OnEnter()
 	end
 
 	if IsInRaid() then
-		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficulty()], nil,nil,nil, 1,1,1)
+		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficultyID()], nil,nil,nil, 1,1,1)
 	elseif GetNumGroupMembers() > 0 then
 		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
 	elseif queue ~= 0 then
@@ -130,7 +130,7 @@ function dataobj:OnEnter()
 	else
 		GameTooltip:AddLine(ERR_NOT_IN_GROUP, 1,1,1)
 		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
-		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficulty()], nil,nil,nil, 1,1,1)
+		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficultyID()], nil,nil,nil, 1,1,1)
 	end
 
 	if queue ~= 0 then
@@ -203,7 +203,7 @@ function dataobj:OnClick(button)
 		local function slm(self) SetLootMethod(self.value, self.value == "master" and UnitName("player") or nil) end
 		local function slt(self) SetLootThreshold(self.value) end
 		local function gdd(i) return not IsInRaid() and GetDungeonDifficultyID() == i end
-		local function grd(i) return IsInRaid() and GetRaidDifficulty() == i end
+		local function grd(i) return IsInRaid() and GetRaidDifficultyID() == i end
 		local function glm(i) return GetLootMethod() == i end
 		local function glt(i) return GetLootThreshold() == i end
 		menuitems = {
