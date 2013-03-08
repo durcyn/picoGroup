@@ -50,7 +50,11 @@ end
 
 
 local function GetLootTypeText()
-	return IsInGroup() and (ITEM_QUALITY_COLORS[GetLootThreshold()].hex.. loottypes[GetLootMethod()]) or ""
+	local text
+	if IsInGroup() then
+		text = (ITEM_QUALITY_COLORS[GetLootThreshold()].hex.. loottypes[GetLootMethod()]) 
+	end
+	return text
 end
 
 
