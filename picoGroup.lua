@@ -35,16 +35,22 @@ end})
 
 local function GetGroupTypeText()
 	local text = (ITEM_QUALITY_COLORS[0].hex.."Solo")
-	local zone, group, diff, diffname = GetInstanceInfo()
-	if diff > 0 then 
-		text = instancetypes[diff]..(guildsuffix or "").."|r - " 
+	if (IsInInstance()) then
+		local zone, group, diff, diffname = GetInstanceInfo()
+		if diff > 0 then 
+			text = instancetypes[diff]..(guildsuffix or "").."|r - " 
+		end
+	else
+		if IsInGroup() then
+			text = ""
+		end
 	end
 	return text
 end
 
 
 local function GetLootTypeText()
-	return GetNumGroupMembers() > 0 and (ITEM_QUALITY_COLORS[GetLootThreshold()].hex.. loottypes[GetLootMethod()]) or ""
+	return IsInGroup() and (ITEM_QUALITY_COLORS[GetLootThreshold()].hex.. loottypes[GetLootMethod()]) or ""
 end
 
 
