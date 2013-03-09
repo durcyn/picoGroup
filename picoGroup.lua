@@ -38,7 +38,7 @@ local function GetGroupTypeText()
 	if (IsInInstance()) then
 		local zone, group, diff, diffname = GetInstanceInfo()
 		if diff > 0 then 
-			text = instancetypes[diff]..(guildsuffix or "").."|r - " 
+			text = instancetypes[diff]..(guildsuffix or "").."|r" 
 		end
 	else
 		if IsInGroup() then
@@ -50,13 +50,14 @@ end
 
 
 local function GetLootTypeText()
-	local threshold = GetLootThreshold()
-	local method = GetLootMethod()
-	if threshold and method then 
-		return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
-	else
-		return ""
+	if IsInGroup() then
+		local threshold = GetLootThreshold()
+		local method = GetLootMethod()
+		if threshold and threshold > 7 then return "" end
+		if method and not loottypes[method] then return end
+		return " - "..(ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
 	end
+	return ""
 end
 
 
