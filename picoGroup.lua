@@ -50,7 +50,13 @@ end
 
 
 local function GetLootTypeText()
-	return (ITEM_QUALITY_COLORS[GetLootThreshold()].hex or "")..(loottypes[GetLootMethod()] or "")
+	local threshold = GetLootThreshold()
+	local method = GetLootMethod()
+	if threshold and method then 
+		return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
+	else
+		return ""
+	end
 end
 
 
