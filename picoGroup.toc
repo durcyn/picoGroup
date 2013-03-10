@@ -11,7 +11,7 @@
 ## LoadManagers: AddonLoader
 ## X-LoadOn-Group: true
 ## X-LoadOn-Events: LFG_UPDATE
-## X-LoadOn-LFG_UPDATE: for i=1,NUM_LFG_CATEGORYS do if GetLFGMode(i) then AddonLoader:LoadAddOn('picoGroup') end end
+## X-LoadOn-LFG_UPDATE: for i=1,NUM_LE_LFG_CATEGORYS do if GetLFGMode(i) then AddonLoader:LoadAddOn('picoGroup') end end
 
 LibStub.lua
 CallbackHandler-1.0.lua
