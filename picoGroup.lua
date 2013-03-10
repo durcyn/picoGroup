@@ -46,15 +46,10 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	if IsInRaid() then
-		local diff = GetRaidDifficultyID()
-		if not difficulties[diff] then return "" end
-		return difficulties[diff]..(guildsuffix or "").."|r" 
-	else
-		local diff = GetDungeonDifficultyID()
-		if not difficulties[diff] then return "" end
-		return difficulties[diff]..(guildsuffix or "").."|r" 
-	end
+	local diff = GetDungeonDifficultyID()
+	if IsInRaid() then diff = GetRaidDifficultyID() end
+	if not difficulties[diff] then return "" end
+	return difficulties[diff]..(guildsuffix or "").."|r" 
 end
 
 
