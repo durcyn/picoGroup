@@ -48,22 +48,16 @@ end})
 local function GetGroupTypeText()
 	if IsInRaid() then
 		return difficulties[GetRaidDifficultyID()]..(guildsuffix or "").."|r" 
-	elseif IsInGroup() then
+	else
 		return difficulties[GetDungeonDifficultyID()]..(guildsuffix or "").."|r" 
 	end
-	return ITEM_QUALITY_COLORS[0].hex..SOLO
 end
 
 
 local function GetLootTypeText()
-	if IsInGroup() then
-		local threshold = GetLootThreshold()
-		local method = GetLootMethod()
-		if threshold and threshold > 7 then return "" end
-		if method and not loottypes[method] then return end
-		return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
-	end
-	return ""
+	local threshold = GetLootThreshold()
+	if threshold and threshold > 7 then return "" end
+	return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[GetLootMethod()]
 end
 
 
@@ -82,7 +76,7 @@ local function GetText()
 			if IsInGroup() then
 				return GetGroupTypeText().." - "..GetLootTypeText()
 			else
-				return GetGroupTypeText()
+				return ITEM_QUALITY_COLORS[0].hex..SOLO
 			end
 		end
 	end
