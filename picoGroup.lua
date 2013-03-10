@@ -47,9 +47,13 @@ end})
 
 local function GetGroupTypeText()
 	if IsInRaid() then
-		return difficulties[GetRaidDifficultyID()]..(guildsuffix or "").."|r" 
+		local diff = GetRaidDifficultyID()
+		if not difficulties[diff] then return "" end
+		return difficulties[diff]..(guildsuffix or "").."|r" 
 	else
-		return difficulties[GetDungeonDifficultyID()]..(guildsuffix or "").."|r" 
+		local diff = GetDungeonDifficultyID()
+		if not difficulties[diff] then return "" end
+		return difficulties[diff]..(guildsuffix or "").."|r" 
 	end
 end
 
