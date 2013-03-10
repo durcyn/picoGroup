@@ -3,7 +3,7 @@ local ldb, ae = LibStub:GetLibrary("LibDataBroker-1.1"), LibStub("AceEvent-3.0")
 
 local loottypes = {freeforall = "FFA", group = "Group", master = "ML", needbeforegreed = "NBG", roundrobin = "RR"}
 
-local instancetypes = {
+local difficulties = {
 	ITEM_QUALITY_COLORS[2].hex.."5",
 	ITEM_QUALITY_COLORS[3].hex.."5H",
 	ITEM_QUALITY_COLORS[4].hex.."10",
@@ -13,6 +13,18 @@ local instancetypes = {
 	ITEM_QUALITY_COLORS[4].hex.."RF",
 	ITEM_QUALITY_COLORS[4].hex.."5C",
 	ITEM_QUALITY_COLORS[4].hex.."40"
+}
+
+local diffnames = {
+	DUNGEON_DIFFICULTY_5PLAYER,
+	DUNGEON_DIFFICULTY_5PLAYER_HEROIC,
+	RAID_DIFFICULTY_10PLAYER,
+	RAID_DIFFICULTY_10PLAYER_HEROIC,
+	RAID_DIFFICULTY_25PLAYER,
+	RAID_DIFFICULTY_25PLAYER_HEROIC,
+	RAID_FINDER,
+	CHALLENGE_MODE,
+	RAID_DIFFICULTY_40PLAYER
 }
 
 local icons = {
@@ -34,18 +46,12 @@ local names = setmetatable({}, {__index = function(t, i)
 end})
 
 local function GetGroupTypeText()
-	local text = (ITEM_QUALITY_COLORS[0].hex.."Solo")
-	if (IsInInstance()) then
-		local zone, group, diff, diffname = GetInstanceInfo()
-		if diff > 0 then 
-			text = instancetypes[diff]..(guildsuffix or "").."|r" 
-		end
-	else
-		if IsInGroup() then
-			text = ""
-		end
+	if IsInRaid() then
+		return difficulties[GetRaidDifficultyID()]..(guildsuffix or "").."|r" 
+	elseif IsInGroup() then
+		return difficulties[GetDungeonDifficultyID()]..(guildsuffix or "").."|r" 
 	end
-	return text
+	return ITEM_QUALITY_COLORS[0].hex..SOLO
 end
 
 
@@ -55,7 +61,7 @@ local function GetLootTypeText()
 		local method = GetLootMethod()
 		if threshold and threshold > 7 then return "" end
 		if method and not loottypes[method] then return end
-		return " - "..(ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
+		return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
 	end
 	return ""
 end
@@ -73,7 +79,11 @@ local function GetText()
 				..(dps    <= 1 and icons.dps  or icons.none)
 				..(dps    == 0 and icons.dps  or icons.none)
 		else
-			return GetGroupTypeText()..GetLootTypeText()
+			if IsInGroup() then
+				return GetGroupTypeText().." - "..GetLootTypeText()
+			else
+				return GetGroupTypeText()
+			end
 		end
 	end
 end
@@ -136,15 +146,15 @@ function dataobj:OnEnter()
 	end
 
 	if IsInRaid() then
-		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficultyID()], nil,nil,nil, 1,1,1)
-	elseif GetNumGroupMembers() > 0 then
-		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
+		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, diffnames[GetRaidDifficultyID()], nil,nil,nil, 1,1,1)
+	elseif IsInGroup() then
+		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, diffnames[GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
 	elseif queue ~= 0 then
 		GameTooltip:AddLine(LFG_TITLE, 0.75,1,0.75)
 	else
 		GameTooltip:AddLine(ERR_NOT_IN_GROUP, 1,1,1)
-		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, _G["DUNGEON_DIFFICULTY"..GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
-		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, _G["RAID_DIFFICULTY"..GetRaidDifficultyID()], nil,nil,nil, 1,1,1)
+		GameTooltip:AddDoubleLine(DUNGEON_DIFFICULTY, diffnames[GetDungeonDifficultyID()], nil,nil,nil, 1,1,1)
+		GameTooltip:AddDoubleLine(RAID_DIFFICULTY, diffnames[GetRaidDifficultyID()], nil,nil,nil, 1,1,1)
 	end
 
 	if queue ~= 0 then
