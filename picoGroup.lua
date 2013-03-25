@@ -55,10 +55,11 @@ end
 
 local function GetLootTypeText()
 	local threshold = GetLootThreshold()
-	if threshold and threshold > 7 then return "" end
-	return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[GetLootMethod()]
+	if threshold > 7 then return "" end
+	local method = GetLootMethod()
+	if not method then return "" end
+	return (ITEM_QUALITY_COLORS[threshold].hex)..loottypes[method]
 end
-
 
 local function GetText()
 	for i = 1, NUM_LE_LFG_CATEGORYS do
